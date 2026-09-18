@@ -1,11 +1,14 @@
 from __future__ import annotations
 
+import io
 import json
 from datetime import date, datetime
 from pathlib import Path
 from uuid import uuid4
 
 from PIL import Image, ImageOps
+
+from crypto_covers import write_encrypted_cover
 
 ROOT = Path(__file__).resolve().parent
 SOURCE = ROOT / "uploads" / "source"
@@ -605,14 +608,16 @@ def main() -> None:
             continue
 
         slug = "".join(ch if ch.isalnum() else "-" for ch in item["title"].lower()).strip("-")[:60]
-        dest = COVERS / f"{slug}.jpg"
+        dest = COVERS / f"{slug}.jpg.enc"
 
         image = ImageOps.exif_transpose(Image.open(src))
         if item.get("rotate", 0) != 0:
             image = image.rotate(item["rotate"], expand=True)
 
         image.thumbnail((600, 900), Image.Resampling.LANCZOS)
-        image.convert("RGB").save(dest, "JPEG", quality=92)
+        buf = io.BytesIO()
+        image.convert("RGB").save(buf, format="JPEG", quality=92)
+        dest = write_encrypted_cover(dest, buf.getvalue())
 
         books.append(
             {
@@ -621,7 +626,7 @@ def main() -> None:
                 "author": item["author"],
                 "pages": item["pages"],
                 "pages_read": 0,
-                "cover_path": str(dest),
+                "cover_path": str(dest.relative_to(ROOT)).replace("\\", "/"),
                 "notes": item["notes"],
                 "priority": item["priority"],
                 "status": "unread",

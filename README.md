@@ -20,4 +20,20 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-Library data lives in `data/library.json`. Cover images live in `uploads/covers/`. Paths are stored relative to the repo root so the same files work locally and on Streamlit Cloud.
+Library data lives in `data/library.json`. Cover images in `uploads/covers/` are **Fernet-encrypted** (`.jpg.enc`). The app decrypts them in memory at runtime.
+
+## Cover encryption
+
+1. Put this in `.streamlit/secrets.toml` (local) and in **Streamlit Cloud → App settings → Secrets**:
+
+```toml
+FERNET_KEY = "paste-the-key-here"
+```
+
+2. Re-encrypt covers after adding plaintext files:
+
+```bash
+python encrypt_covers.py
+```
+
+Never commit `.streamlit/secrets.toml` or `.streamlit/fernet.key`.

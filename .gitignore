@@ -6,8 +6,9 @@ __pycache__/
 .env
 .env.*
 .streamlit/secrets.toml
+.streamlit/fernet.key
 
-# Bulky / generated uploads — keep covers for the app
+# Bulky / generated uploads — keep encrypted covers for the app
 uploads/source/
 uploads/sheets/
 uploads/verify/
@@ -16,6 +17,10 @@ uploads/*.jpg
 uploads/*.jpeg
 uploads/*.png
 uploads/*.webp
+uploads/covers/*.jpg
+uploads/covers/*.jpeg
+uploads/covers/*.png
+uploads/covers/*.webp
 
 # Local backups
 data/*.e2e_backup

@@ -31,6 +31,7 @@ from planner import (
     remaining_pages,
     surprise_pick,
 )
+from crypto_covers import read_cover_bytes, write_encrypted_cover
 from storage import (
     CATEGORIES,
     UPLOADS,
@@ -177,7 +178,8 @@ def persist(library: dict) -> None:
 
 @st.cache_data(show_spinner=False)
 def thumb_bytes(path: str, width: int = 260) -> bytes:
-    with Image.open(path) as img:
+    raw = read_cover_bytes(Path(path))
+    with Image.open(io.BytesIO(raw)) as img:
         img = ImageOps.exif_transpose(img).convert("RGB")
         width = max(int(width), 80)
         w, h = img.size
@@ -609,11 +611,13 @@ if page == "Library":
             cover = ""
             source_image = ""
             if photo is not None:
-                dest = UPLOADS / "covers" / f"{date.today().isoformat()}-{photo.name}"
+                dest = UPLOADS / "covers" / f"{date.today().isoformat()}-{Path(photo.name).stem}.jpg.enc"
                 dest.parent.mkdir(parents=True, exist_ok=True)
                 image = ImageOps.exif_transpose(Image.open(io.BytesIO(photo.getvalue()))).convert("RGB")
                 image.thumbnail((600, 900), Image.Resampling.LANCZOS)
-                image.save(dest, "JPEG", quality=92)
+                buf = io.BytesIO()
+                image.save(buf, format="JPEG", quality=92)
+                dest = write_encrypted_cover(dest, buf.getvalue())
                 cover = stored_path(dest)
                 source_image = photo.name
             if not cover:
