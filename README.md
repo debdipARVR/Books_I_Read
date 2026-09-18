@@ -24,16 +24,10 @@ Library data lives in `data/library.json`. Cover images in `uploads/covers/` are
 
 ## Cover encryption
 
-1. Put this in `.streamlit/secrets.toml` (local) and in **Streamlit Cloud → App settings → Secrets**:
+The site **asks for the Fernet key** before it decrypts any cover. Paste the key on the unlock screen. Covers stay encrypted on disk; decryption is in memory for that session only. Use **Lock shelf** in the sidebar to forget the key.
 
-```toml
-FERNET_KEY = "paste-the-key-here"
-```
-
-2. Re-encrypt covers after adding plaintext files:
+CLI helper (does not run in the browser):
 
 ```bash
 python encrypt_covers.py
 ```
-
-Never commit `.streamlit/secrets.toml` or `.streamlit/fernet.key`.

@@ -31,8 +31,8 @@ from planner import (
     remaining_pages,
     surprise_pick,
 )
-from crypto_covers import read_cover_bytes, write_encrypted_cover
-from storage import (
+from crypto_covers import read_cover_bytes, try_unlock, write_encrypted_cover
+from shelf_store import (
     CATEGORIES,
     UPLOADS,
     append_progress,
@@ -155,6 +155,14 @@ st.markdown(
           flex: 1 1 calc(33.33% - 0.35rem) !important;
         }
       }
+      .unlock-card {
+        max-width: 520px; margin: 3.5rem auto 0;
+        background: #fffaf3; border: 1px solid #e4d3b8; border-radius: 24px;
+        padding: 1.6rem 1.5rem 1.4rem;
+        box-shadow: 0 18px 40px rgba(58, 39, 24, 0.12);
+      }
+      .unlock-card h1 { margin: 0.15rem 0 0.4rem; }
+      .unlock-card p { color: #6d573f; margin: 0 0 0.4rem; }
       @media (max-width: 520px) {
         .stApp div[data-testid="stHorizontalBlock"] > div {
           min-width: calc(50% - 0.3rem) !important;
@@ -176,9 +184,43 @@ def persist(library: dict) -> None:
     st.rerun()
 
 
+def session_key() -> str:
+    return str(st.session_state.get("fernet_key") or "")
+
+
+def render_unlock_gate() -> None:
+    st.markdown(
+        """
+        <style>
+          section[data-testid="stSidebar"],
+          [data-testid="collapsedControl"] { display: none !important; }
+        </style>
+        <div class="unlock-card"><div class="eyebrow">Locked shelf</div>
+        <h1>Enter the Fernet key</h1>
+        <p>Covers stay encrypted until you paste the key. Nothing is decrypted without it.</p></div>
+        """,
+        unsafe_allow_html=True,
+    )
+    with st.form("unlock-shelf"):
+        entered = st.text_input(
+            "Fernet key",
+            type="password",
+            placeholder="Paste the Fernet key to decrypt covers",
+        )
+        submitted = st.form_submit_button("Unlock shelf", width="stretch")
+    if submitted:
+        error = try_unlock(entered)
+        if error:
+            st.error(error)
+        else:
+            st.session_state.fernet_key = entered.strip()
+            st.rerun()
+    st.stop()
+
+
 @st.cache_data(show_spinner=False)
-def thumb_bytes(path: str, width: int = 260) -> bytes:
-    raw = read_cover_bytes(Path(path))
+def thumb_bytes(path: str, width: int = 260, key: str = "") -> bytes:
+    raw = read_cover_bytes(Path(path), key)
     with Image.open(io.BytesIO(raw)) as img:
         img = ImageOps.exif_transpose(img).convert("RGB")
         width = max(int(width), 80)
@@ -201,8 +243,9 @@ def cover_path(book: dict) -> Path | None:
 
 def show_cover(book: dict, width: int = 260) -> None:
     path = cover_path(book)
-    if path:
-        st.image(thumb_bytes(str(path), width), width="stretch")
+    key = session_key()
+    if path and key:
+        st.image(thumb_bytes(str(path), width, key), width="stretch")
     else:
         st.markdown(
             f'<div class="spine-fallback">{html.escape(short_title(book.get("title") or "Untitled", 40))}</div>',
@@ -232,8 +275,9 @@ def render_cover_tile(book: dict, key_prefix: str, width: int = 240) -> None:
     del key_prefix  # kept for call-site compatibility
     path = cover_path(book)
     title = html.escape(book.get("title") or "Untitled")
-    if path:
-        b64 = base64.b64encode(thumb_bytes(str(path), width)).decode("ascii")
+    key = session_key()
+    if path and key:
+        b64 = base64.b64encode(thumb_bytes(str(path), width, key)).decode("ascii")
         st.markdown(
             f'<a class="cover-link" href="?open={book["id"]}" title="{title}">'
             f'<img src="data:image/jpeg;base64,{b64}" alt="{title}" /></a>',
@@ -501,6 +545,10 @@ def render_recommendations(library: dict, books: list[dict], reading: list[dict]
 # App body
 # ---------------------------------------------------------------------------
 
+st.session_state.setdefault("fernet_key", "")
+if not session_key():
+    render_unlock_gate()
+
 library = load_library()
 books = library.setdefault("books", [])
 settings = library.setdefault("settings", {})
@@ -543,6 +591,10 @@ with st.sidebar:
         f"Score {stats['score']} · 🔥 {stats['streak']}-day streak</p>",
         unsafe_allow_html=True,
     )
+    if st.button("Lock shelf", width="stretch"):
+        st.session_state.fernet_key = ""
+        st.session_state.open_book_id = None
+        st.rerun()
 
 if page == "Library":
     st.markdown(
@@ -617,7 +669,7 @@ if page == "Library":
                 image.thumbnail((600, 900), Image.Resampling.LANCZOS)
                 buf = io.BytesIO()
                 image.save(buf, format="JPEG", quality=92)
-                dest = write_encrypted_cover(dest, buf.getvalue())
+                dest = write_encrypted_cover(dest, buf.getvalue(), session_key())
                 cover = stored_path(dest)
                 source_image = photo.name
             if not cover:
