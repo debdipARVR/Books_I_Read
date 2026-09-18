@@ -1,0 +1,10 @@
+[server]
+headless = true
+folderWatchBlacklist = ["data", "uploads", ".venv"]
+
+[theme]
+base = "light"
+primaryColor = "#6b4226"
+backgroundColor = "#f4ead8"
+secondaryBackgroundColor = "#efe3cf"
+textColor = "#2b2118"

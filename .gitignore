@@ -1,0 +1,42 @@
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+.DS_Store
+.env
+.env.*
+.streamlit/secrets.toml
+
+# Bulky / generated uploads — keep covers for the app
+uploads/source/
+uploads/sheets/
+uploads/verify/
+uploads/ocr_results.json
+uploads/*.jpg
+uploads/*.jpeg
+uploads/*.png
+uploads/*.webp
+
+# Local backups
+data/*.e2e_backup
+data/*.backup
+*.bak
+
+# One-off OCR / verify helpers
+analyze_ocr.py
+run_full_ocr.ps1
+test_ocr.ps1
+crop_*.py
+dump_ocr_text.py
+print_all_ocr.py
+print_mapping_slice.py
+check_orient.py
+check_mapping.py
+check_test_files.py
+classify_images.py
+inspect_seed_books.py
+verify_ui.py
+verify_covers.py
+verify_analytics.py
+test_e2e_suite.py
+audit_library.py
