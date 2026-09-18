@@ -31,7 +31,16 @@ from planner import (
     remaining_pages,
     surprise_pick,
 )
-from storage import CATEGORIES, UPLOADS, append_progress, load_library, new_book, save_library
+from storage import (
+    CATEGORIES,
+    UPLOADS,
+    append_progress,
+    load_library,
+    new_book,
+    resolve_path,
+    save_library,
+    stored_path,
+)
 
 st.set_page_config(page_title="Shelf Plan", page_icon="📖", layout="wide")
 
@@ -185,9 +194,7 @@ def short_title(title: str, limit: int = 32) -> str:
 
 
 def cover_path(book: dict) -> Path | None:
-    raw = book.get("cover_path") or ""
-    path = Path(raw) if raw else None
-    return path if path and path.is_file() else None
+    return resolve_path(book.get("cover_path") or "")
 
 
 def show_cover(book: dict, width: int = 260) -> None:
@@ -607,7 +614,7 @@ if page == "Library":
                 image = ImageOps.exif_transpose(Image.open(io.BytesIO(photo.getvalue()))).convert("RGB")
                 image.thumbnail((600, 900), Image.Resampling.LANCZOS)
                 image.save(dest, "JPEG", quality=92)
-                cover = str(dest)
+                cover = stored_path(dest)
                 source_image = photo.name
             if not cover:
                 st.error("Add a cover photo so it can sit on the shelf.")

@@ -10,6 +10,41 @@ ROOT = Path(__file__).resolve().parent
 DATA_PATH = ROOT / "data" / "library.json"
 UPLOADS = ROOT / "uploads"
 
+
+def stored_path(path: Path) -> str:
+    """Store a repo-relative POSIX path so covers work locally and on Streamlit Cloud."""
+    resolved = path.resolve()
+    try:
+        return resolved.relative_to(ROOT).as_posix()
+    except ValueError:
+        return resolved.as_posix()
+
+
+def resolve_path(raw: str) -> Path | None:
+    """Resolve a stored cover path against the repo root (handles old absolute paths)."""
+    if not raw or not str(raw).strip():
+        return None
+    path = Path(raw)
+    candidates: list[Path] = []
+    if path.is_absolute():
+        candidates.append(path)
+        parts = path.parts
+        if "uploads" in parts:
+            idx = parts.index("uploads")
+            candidates.append(ROOT.joinpath(*parts[idx:]))
+        candidates.append(ROOT / "uploads" / "covers" / path.name)
+    else:
+        candidates.append(ROOT / path)
+        candidates.append(path)
+    for candidate in candidates:
+        try:
+            if candidate.is_file():
+                return candidate
+        except OSError:
+            continue
+    return None
+
+
 CATEGORIES = [
     "Tech / Python",
     "Habits / Productivity",
