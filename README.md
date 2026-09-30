@@ -8,7 +8,7 @@ A Streamlit reading companion: visual shelf, daily plan, progress tracking, and 
 - **Branch:** `master`
 - **Repo:** [debdipARVR/Books_I_Read](https://github.com/debdipARVR/Books_I_Read)
 
-Deploy from [share.streamlit.io](https://share.streamlit.io): Create app → Yup, I have an app → repository `debdipARVR/Books_I_Read`, branch `master`, main file `app.py`.
+Deploy from [share.streamlit.io](https://share.streamlit.io): Create app→ repository `debdipARVR/Books_I_Read`, branch `master`, main file `app.py`.
 
 ## Run locally
 
