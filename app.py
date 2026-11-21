@@ -48,17 +48,22 @@ st.set_page_config(page_title="Shelf Plan", page_icon="📖", layout="wide")
 st.markdown(
     """
     <style>
-      @import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Source+Sans+3:wght@400;600&display=swap");
-      html, body, [class*="css"] { font-family: "Source Sans 3", sans-serif; }
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap");
+      html, body, [class*="css"] {
+        font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Inter', sans-serif !important;
+      }
       .stApp {
-        background:
-          radial-gradient(900px 420px at 8% -8%, #fff6e8 0%, transparent 55%),
-          linear-gradient(180deg, #f4ead8 0%, #e7d5b8 100%);
-        color: #2b2118;
+        background-color: #0d0f12 !important;
+        color: #c9d1d9 !important;
       }
       .block-container { padding-top: 1.1rem; padding-bottom: 3rem; max-width: 1180px; }
-      h1, h2, h3 { font-family: "Fraunces", serif; color: #3a2718; letter-spacing: -0.02em; }
-      header[data-testid="stHeader"] { background: transparent; }
+      h1, h2, h3 {
+        font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Inter', sans-serif !important;
+        font-weight: 300 !important;
+        color: #ffffff !important;
+        letter-spacing: -0.03em !important;
+      }
+      header[data-testid="stHeader"] { background: transparent !important; }
       #MainMenu, footer, .stDeployButton, [data-testid="stToolbar"],
       [data-testid="stDecoration"], [data-testid="stStatusWidget"],
       [data-testid="stAppDeployButton"] { display: none !important; }
@@ -69,83 +74,148 @@ st.markdown(
       section[data-testid="stSidebar"],
       div[data-testid="stSidebar"],
       [data-testid="stSidebarContent"] {
-        background: linear-gradient(180deg, #3a2718 0%, #24170f 100%) !important;
+        background-color: #14181d !important;
+        border-right: 1px solid #22272e !important;
       }
       section[data-testid="stSidebar"] p,
       section[data-testid="stSidebar"] span,
       section[data-testid="stSidebar"] label,
       section[data-testid="stSidebar"] small {
-        color: #f6f0e6 !important;
+        color: #c9d1d9 !important;
       }
 
-      .eyebrow { letter-spacing: 0.18em; text-transform: uppercase; font-size: 0.72rem; color: #8a6a45; }
-      .hero { padding: 0.1rem 0 0.35rem; }
-      .hero p { color: #6d573f; margin-top: 0.15rem; }
-      .muted { color: #7a654d; }
-      .stat {
-        background: #fffaf3; border: 1px solid #e4d3b8; border-radius: 18px;
-        padding: 0.85rem 1rem;
+      .eyebrow {
+        font-family: 'JetBrains Mono', 'Consolas', monospace !important;
+        letter-spacing: 0.18em !important;
+        text-transform: uppercase !important;
+        font-size: 0.72rem !important;
+        color: #0078d4 !important;
       }
-      .stat b { font-family: "Fraunces", serif; font-size: 1.4rem; display: block; }
+      .hero { padding: 0.1rem 0 0.35rem; }
+      .hero p { color: #8b949e !important; margin-top: 0.15rem; }
+      .muted { color: #768390 !important; }
+      .stat {
+        background: #14181d !important;
+        border: 1px solid #22272e !important;
+        border-radius: 0px !important;
+        padding: 0.85rem 1rem;
+        box-shadow: none !important;
+      }
+      .stat b {
+        font-family: 'Segoe UI', sans-serif !important;
+        font-weight: 300 !important;
+        font-size: 1.4rem;
+        display: block;
+        color: #ffffff !important;
+      }
 
       .score-bar {
         display: flex; flex-wrap: wrap; gap: 0.55rem; margin: 0.6rem 0 0.9rem;
       }
       .score-chip {
-        background: #fffaf3; border: 1px solid #e4d3b8; border-radius: 999px;
-        padding: 0.45rem 0.85rem; font-size: 0.92rem; color: #3a2718;
+        background: #14181d !important;
+        border: 1px solid #22272e !important;
+        border-radius: 0px !important;
+        padding: 0.45rem 0.85rem;
+        font-size: 0.85rem;
+        color: #c9d1d9 !important;
+        font-family: 'JetBrains Mono', monospace !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.08em !important;
       }
-      .score-chip strong { font-family: "Fraunces", serif; }
+      .score-chip strong {
+        font-family: 'Segoe UI', sans-serif !important;
+        color: #0078d4 !important;
+      }
 
       .now-card {
-        background: #fffaf3; border: 1px solid #e4d3b8; border-radius: 22px;
-        padding: 0.85rem 1rem 1rem; margin-bottom: 0.75rem;
+        background: #14181d !important;
+        border: 1px solid #22272e !important;
+        border-radius: 0px !important;
+        padding: 0.85rem 1rem 1rem;
+        margin-bottom: 0.75rem;
+        box-shadow: none !important;
       }
       .pulled {
-        background: #fffaf3; border: 1px solid #e4d3b8; border-radius: 22px;
-        padding: 0.55rem 0.35rem 0.25rem; margin-bottom: 0.85rem;
+        background: #14181d !important;
+        border: 1px solid #22272e !important;
+        border-radius: 0px !important;
+        padding: 0.55rem 0.35rem 0.25rem;
+        margin-bottom: 0.85rem;
+        box-shadow: none !important;
       }
       .section-head { margin: 1rem 0 0.3rem; }
-      .section-head h2 { margin: 0; font-size: 1.45rem; }
+      .section-head h2 { margin: 0; font-size: 1.45rem; color: #ffffff !important; }
       .empty-shelf {
-        background: rgba(255,250,243,0.55); border: 1px dashed #d7c3a4;
-        border-radius: 16px; padding: 0.9rem 1rem; color: #7a654d; margin-bottom: 0.6rem;
+        background: #14181d !important;
+        border: 1px dashed #22272e !important;
+        border-radius: 0px !important;
+        padding: 0.9rem 1rem;
+        color: #768390 !important;
+        margin-bottom: 0.6rem;
       }
       .shelf-plank {
-        height: 11px; margin: -0.35rem 0 1rem;
-        border-radius: 2px 2px 6px 6px;
-        background: linear-gradient(180deg, #c79255 0%, #8b5a2b 42%, #5c3a1e 100%);
-        box-shadow: 0 8px 14px rgba(58, 39, 24, 0.18);
+        height: 4px !important;
+        margin: -0.35rem 0 1rem;
+        border-radius: 0px !important;
+        background: #0078d4 !important;
+        box-shadow: none !important;
       }
       .spine-fallback {
         aspect-ratio: 3 / 4; display: flex; align-items: flex-end; justify-content: center;
-        text-align: center; padding: 0.8rem; border-radius: 3px 8px 8px 3px;
-        background: linear-gradient(180deg, #7b2e2e, #4d1c1c); color: #f6e7c8;
-        font-family: "Fraunces", serif; font-size: 0.92rem;
-        box-shadow: 4px 8px 18px rgba(58, 39, 24, 0.28);
+        text-align: center; padding: 0.8rem; border-radius: 0px !important;
+        background: #1b2128 !important; color: #ffffff !important;
+        border: 1px solid #22272e !important;
+        font-family: 'Segoe UI', sans-serif !important; font-size: 0.88rem;
+        box-shadow: none !important;
       }
       .rec-card {
-        background: #fffaf3; border: 1px solid #e4d3b8; border-radius: 16px;
-        padding: 0.75rem 0.85rem; margin-bottom: 0.45rem;
+        background: #14181d !important;
+        border: 1px solid #22272e !important;
+        border-radius: 0px !important;
+        padding: 0.75rem 0.85rem;
+        margin-bottom: 0.45rem;
+        box-shadow: none !important;
       }
       .plan-day {
-        background: #fffaf3; border: 1px solid #e4d3b8; border-radius: 14px;
-        padding: 0.7rem 0.9rem; margin-bottom: 0.45rem;
+        background: #14181d !important;
+        border: 1px solid #22272e !important;
+        border-radius: 0px !important;
+        padding: 0.7rem 0.9rem;
+        margin-bottom: 0.45rem;
+        box-shadow: none !important;
       }
 
       [data-testid="stImage"] img,
       a.cover-link img {
-        border-radius: 3px 9px 9px 3px;
-        box-shadow: 5px 10px 22px rgba(58, 39, 24, 0.28);
-        object-fit: cover; aspect-ratio: 3 / 4; width: 100%; background: #d7c3a4;
+        border-radius: 0px !important;
+        box-shadow: none !important;
+        border: 1px solid #22272e !important;
+        object-fit: cover; aspect-ratio: 3 / 4; width: 100%; background: #14181d;
         display: block;
       }
       a.cover-link {
         display: block; text-decoration: none; line-height: 0;
-        transition: transform 0.15s ease, filter 0.15s ease;
+        transition: opacity 0.15s ease;
       }
-      a.cover-link:hover { transform: translateY(-3px); filter: brightness(1.03); }
-      a.cover-link:active { transform: translateY(0); }
+      a.cover-link:hover { opacity: 0.85; }
+
+      /* Metro Flat Buttons */
+      button, div[data-testid="stButton"] > button {
+        background-color: #14181d !important;
+        border: 1px solid #22272e !important;
+        color: #ffffff !important;
+        border-radius: 0px !important;
+        font-family: 'Segoe UI', sans-serif !important;
+        font-weight: 600 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.08em !important;
+      }
+      button:hover, div[data-testid="stButton"] > button:hover {
+        background-color: #0078d4 !important;
+        border-color: #0078d4 !important;
+        color: #ffffff !important;
+      }
 
       @media (max-width: 900px) {
         .block-container { padding-left: 0.85rem; padding-right: 0.85rem; }
@@ -157,12 +227,14 @@ st.markdown(
       }
       .unlock-card {
         max-width: 520px; margin: 3.5rem auto 0;
-        background: #fffaf3; border: 1px solid #e4d3b8; border-radius: 24px;
+        background: #14181d !important;
+        border: 1px solid #22272e !important;
+        border-radius: 0px !important;
         padding: 1.6rem 1.5rem 1.4rem;
-        box-shadow: 0 18px 40px rgba(58, 39, 24, 0.12);
+        box-shadow: none !important;
       }
-      .unlock-card h1 { margin: 0.15rem 0 0.4rem; }
-      .unlock-card p { color: #6d573f; margin: 0 0 0.4rem; }
+      .unlock-card h1 { margin: 0.15rem 0 0.4rem; color: #ffffff !important; }
+      .unlock-card p { color: #c9d1d9 !important; margin: 0 0 0.4rem; }
       @media (max-width: 520px) {
         .stApp div[data-testid="stHorizontalBlock"] > div {
           min-width: calc(50% - 0.3rem) !important;

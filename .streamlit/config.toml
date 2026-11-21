@@ -3,8 +3,12 @@ headless = true
 folderWatchBlacklist = ["data", "uploads", ".venv"]
 
 [theme]
-base = "light"
-primaryColor = "#6b4226"
-backgroundColor = "#f4ead8"
-secondaryBackgroundColor = "#efe3cf"
-textColor = "#2b2118"
+base = "dark"
+primaryColor = "#0078d4"
+backgroundColor = "#0d0f12"
+secondaryBackgroundColor = "#14181d"
+textColor = "#c9d1d9"
+font = "sans serif"
+
+[client]
+toolbarMode = "minimal"
