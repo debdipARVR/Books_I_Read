@@ -1,4 +1,4 @@
-"""Plotly charts for Shelf Plan analytics — warm bookshelf palette."""
+"""Plotly charts for Shelf Plan analytics — Windows Phone Metro palette."""
 from __future__ import annotations
 
 from collections import defaultdict
@@ -10,22 +10,22 @@ from plotly.subplots import make_subplots
 
 from planner import daily_page_budget, remaining_pages
 
-# Warm shelf palette: amber, copper, terracotta, mocha, olive, cream
+# Windows Phone Metro flat chromatic palette: Cobalt, Mango, Emerald, Cyan, Magenta, Purple, Crimson, Amber
 PALETTE = [
-    "#c79255",  # amber wood
-    "#b65c3a",  # terracotta
-    "#8b5a2b",  # copper
-    "#5c3a1e",  # deep mocha
-    "#6b7a45",  # olive
-    "#d4a574",  # cream gold
-    "#9a6b4f",  # clay
-    "#3a2718",  # espresso
+    "#0078d4",  # Cobalt Blue
+    "#f09609",  # Mango Orange
+    "#107c41",  # Emerald Green
+    "#00a4ef",  # Cyan
+    "#d80073",  # Magenta
+    "#6a00ff",  # Purple
+    "#e81123",  # Crimson
+    "#ffb900",  # Amber / Gold
 ]
 
 STATUS_COLORS = {
-    "unread": "#c79255",
-    "reading": "#b65c3a",
-    "done": "#6b7a45",
+    "unread": "#0078d4",
+    "reading": "#f09609",
+    "done": "#107c41",
 }
 
 STATUS_LABELS = {
@@ -35,15 +35,15 @@ STATUS_LABELS = {
 }
 
 LENGTH_BUCKETS = [
-    ("Quick reads (<200p)", 0, 200, "#c79255"),
-    ("Standard (200–400p)", 200, 400, "#b65c3a"),
-    ("Deep dives (>400p)", 400, 10_000, "#5c3a1e"),
+    ("Quick reads (<200p)", 0, 200, "#00a4ef"),
+    ("Standard (200–400p)", 200, 400, "#0078d4"),
+    ("Deep dives (>400p)", 400, 10_000, "#6a00ff"),
 ]
 
 CHART_LAYOUT = dict(
     paper_bgcolor="rgba(0,0,0,0)",
-    plot_bgcolor="rgba(255,250,243,0.55)",
-    font=dict(family="Source Sans 3, sans-serif", color="#3a2718", size=13),
+    plot_bgcolor="rgba(20,24,29,0.75)",
+    font=dict(family="Segoe UI, -apple-system, sans-serif", color="#c9d1d9", size=12),
     margin=dict(l=16, r=16, t=56, b=72),
     legend=dict(
         orientation="h",
@@ -52,9 +52,15 @@ CHART_LAYOUT = dict(
         xanchor="center",
         x=0.5,
         bgcolor="rgba(0,0,0,0)",
-        font=dict(size=11),
+        font=dict(size=11, color="#8b949e"),
     ),
-    hoverlabel=dict(bgcolor="#fffaf3", font_size=13, font_family="Source Sans 3, sans-serif"),
+    hoverlabel=dict(
+        bgcolor="#14181d",
+        font_size=12,
+        font_family="Segoe UI, -apple-system, sans-serif",
+        font_color="#ffffff",
+        bordercolor="#22272e",
+    ),
 )
 
 
@@ -66,11 +72,11 @@ def _apply_layout(fig: go.Figure, *, height: int = 360, title: str = "") -> go.F
             text=title,
             x=0.02,
             xanchor="left",
-            font=dict(family="Fraunces, serif", size=17, color="#3a2718"),
+            font=dict(family="Segoe UI, -apple-system, sans-serif", size=16, color="#ffffff"),
         ),
     )
-    fig.update_xaxes(gridcolor="rgba(228,211,184,0.6)", zeroline=False, showline=False)
-    fig.update_yaxes(gridcolor="rgba(228,211,184,0.6)", zeroline=False, showline=False)
+    fig.update_xaxes(gridcolor="#22272e", zeroline=False, showline=False, color="#8b949e")
+    fig.update_yaxes(gridcolor="#22272e", zeroline=False, showline=False, color="#8b949e")
     return fig
 
 
@@ -83,7 +89,7 @@ def _empty_fig(message: str, height: int = 320) -> go.Figure:
         x=0.5,
         y=0.5,
         showarrow=False,
-        font=dict(size=15, color="#7a654d", family="Source Sans 3, sans-serif"),
+        font=dict(size=14, color="#768390", family="Segoe UI, -apple-system, sans-serif"),
     )
     fig.update_layout(
         **CHART_LAYOUT,
@@ -115,8 +121,8 @@ def category_donut(books: list[dict[str, Any]], *, by_pages: bool = False) -> go
             go.Pie(
                 labels=labels,
                 values=values,
-                hole=0.58,
-                marker=dict(colors=colors, line=dict(color="#f4ead8", width=2)),
+                hole=0.62,
+                marker=dict(colors=colors, line=dict(color="#0d0f12", width=2)),
                 textinfo="percent",
                 textposition="inside",
                 insidetextorientation="horizontal",
@@ -126,8 +132,14 @@ def category_donut(books: list[dict[str, Any]], *, by_pages: bool = False) -> go
         ]
     )
     title = "Pages by genre" if by_pages else "Books by genre"
-    center = f"{sum(values):.0f}<br><span style='font-size:12px'>{metric}</span>"
-    fig.add_annotation(text=center, x=0.5, y=0.5, font=dict(size=18, family="Fraunces, serif", color="#3a2718"), showarrow=False)
+    center = f"<b>{sum(values):.0f}</b><br><span style='font-size:11px;color:#8b949e'>{metric.upper()}</span>"
+    fig.add_annotation(
+        text=center,
+        x=0.5,
+        y=0.5,
+        font=dict(size=18, family="Segoe UI, -apple-system, sans-serif", color="#ffffff"),
+        showarrow=False,
+    )
     fig = _apply_layout(fig, height=400, title=title)
     fig.update_layout(legend=dict(orientation="h", y=-0.18, x=0.5, xanchor="center", yanchor="top"), margin=dict(b=90, t=50, l=10, r=10))
     return fig
@@ -153,7 +165,7 @@ def status_donut(books: list[dict[str, Any]]) -> go.Figure:
                 labels=labels,
                 values=values,
                 hole=0.62,
-                marker=dict(colors=colors, line=dict(color="#f4ead8", width=2)),
+                marker=dict(colors=colors, line=dict(color="#0d0f12", width=2)),
                 textinfo="value",
                 textposition="inside",
                 hovertemplate="<b>%{label}</b><br>%{value} books (%{percent})<extra></extra>",
@@ -162,10 +174,10 @@ def status_donut(books: list[dict[str, Any]]) -> go.Figure:
         ]
     )
     fig.add_annotation(
-        text=f"{sum(values)}<br><span style='font-size:12px'>on shelf</span>",
+        text=f"<b>{sum(values)}</b><br><span style='font-size:11px;color:#8b949e'>ON SHELF</span>",
         x=0.5,
         y=0.5,
-        font=dict(size=18, family="Fraunces, serif", color="#3a2718"),
+        font=dict(size=18, family="Segoe UI, -apple-system, sans-serif", color="#ffffff"),
         showarrow=False,
     )
     fig = _apply_layout(fig, height=400, title="Reading status")
@@ -213,7 +225,7 @@ def activity_charts(progress_log: list[dict[str, Any]], *, days: int = 30) -> go
             x=xs,
             y=ys,
             name="Daily pages",
-            marker=dict(color="#c79255", line=dict(width=0)),
+            marker=dict(color="#0078d4", line=dict(width=0)),
             hovertemplate="%{x|%b %d}<br>%{y} pages<extra></extra>",
         ),
         secondary_y=False,
@@ -224,10 +236,10 @@ def activity_charts(progress_log: list[dict[str, Any]], *, days: int = 30) -> go
             y=cumulative,
             name="Cumulative",
             mode="lines+markers",
-            line=dict(color="#b65c3a", width=3, shape="spline"),
-            marker=dict(size=6, color="#5c3a1e"),
+            line=dict(color="#f09609", width=2.5),
+            marker=dict(size=5, color="#ffb900"),
             fill="tozeroy",
-            fillcolor="rgba(182, 92, 58, 0.12)",
+            fillcolor="rgba(240, 150, 9, 0.12)",
             hovertemplate="%{x|%b %d}<br>Cumulative %{y} pages<extra></extra>",
         ),
         secondary_y=True,
@@ -270,7 +282,7 @@ def weekly_trend(progress_log: list[dict[str, Any]], *, weeks: int = 8) -> go.Fi
                 y=totals,
                 marker=dict(
                     color=totals,
-                    colorscale=[[0, "#f4ead8"], [0.5, "#c79255"], [1, "#b65c3a"]],
+                    colorscale=[[0, "#161b22"], [0.5, "#0078d4"], [1, "#00a4ef"]],
                     line=dict(width=0),
                 ),
                 hovertemplate="Week of %{x}<br>%{y} pages<extra></extra>",
@@ -313,17 +325,21 @@ def length_distribution(books: list[dict[str, Any]]) -> go.Figure:
             go.Histogram(
                 x=pages,
                 nbinsx=12,
-                marker=dict(color="#8b5a2b", line=dict(color="#f4ead8", width=1)),
+                marker=dict(color="#6a00ff", line=dict(color="#0d0f12", width=1)),
                 hovertemplate="%{x} pages bin<br>%{y} books<extra></extra>",
                 showlegend=False,
             ),
             row=1,
             col=2,
         )
-    fig.update_layout(**CHART_LAYOUT, height=380, title=dict(text="Book length mix", font=dict(family="Fraunces, serif", size=18, color="#3a2718")))
-    fig.update_xaxes(gridcolor="rgba(228,211,184,0.6)", tickangle=-20, row=1, col=1)
-    fig.update_xaxes(title_text="Pages", gridcolor="rgba(228,211,184,0.6)", row=1, col=2)
-    fig.update_yaxes(title_text="Books", gridcolor="rgba(228,211,184,0.6)")
+    fig.update_layout(
+        **CHART_LAYOUT,
+        height=380,
+        title=dict(text="Book length mix", font=dict(family="Segoe UI, -apple-system, sans-serif", size=16, color="#ffffff")),
+    )
+    fig.update_xaxes(gridcolor="#22272e", tickangle=-20, row=1, col=1)
+    fig.update_xaxes(title_text="Pages", gridcolor="#22272e", row=1, col=2)
+    fig.update_yaxes(title_text="Books", gridcolor="#22272e")
     return fig
 
 
@@ -380,7 +396,7 @@ def completion_projections(
         lefts.append(left)
         days_needed.append(days)
         finish_labels.append(finish.isoformat())
-        colors.append("#b65c3a" if book.get("status") == "reading" else "#c79255")
+        colors.append("#f09609" if book.get("status") == "reading" else "#0078d4")
 
     fig = go.Figure(
         data=[
@@ -398,13 +414,13 @@ def completion_projections(
         **CHART_LAYOUT,
         height=max(320, 56 * len(focus) + 80),
         title=dict(
-            text=f"Completion projections<br><span style='font-size:12px;color:#7a654d'>{velocity_label}</span>",
-            font=dict(family="Fraunces, serif", size=18, color="#3a2718"),
+            text=f"Completion projections<br><span style='font-size:11px;color:#8b949e'>{velocity_label}</span>",
+            font=dict(family="Segoe UI, -apple-system, sans-serif", size=16, color="#ffffff"),
         ),
         xaxis_title="Days until finish (at current velocity)",
     )
-    fig.update_xaxes(gridcolor="rgba(228,211,184,0.6)")
-    fig.update_yaxes(gridcolor="rgba(228,211,184,0.0)")
+    fig.update_xaxes(gridcolor="#22272e")
+    fig.update_yaxes(gridcolor="rgba(0,0,0,0)")
     return fig
 
 
@@ -423,7 +439,7 @@ def priority_bars(books: list[dict[str, Any]]) -> go.Figure:
                 x=[f"P{i}" for i in range(1, 6)],
                 y=[counts[i] for i in range(1, 6)],
                 marker=dict(
-                    color=["#d4a574", "#c79255", "#b65c3a", "#8b5a2b", "#5c3a1e"],
+                    color=["#00a4ef", "#0078d4", "#f09609", "#d80073", "#e81123"],
                     line=dict(width=0),
                 ),
                 hovertemplate="Priority %{x}<br>%{y} books<extra></extra>",
